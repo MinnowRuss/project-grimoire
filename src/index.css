@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Raleway:wght@300;400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-void: #0A0A0C;
+  --color-crypt: #141418;
+  --color-ash: #1E1E24;
+  --color-iron: #2E2E38;
+  --color-parchment: #E8E0D0;
+  --color-faded: #9A9080;
+  --color-gold: #C8A84B;
+  --color-gold-dark: #8B6914;
+  --color-blood: #8B1A1A;
+  --color-crimson: #6B1111;
+  --color-crimson-text: #D4534A;
+  --color-callout: #1A1A22;
+  --color-callout-border: #4A3A5C;
+  --color-offline: #4A3020;
+
+  /* Fonts */
+  --font-display: 'Cinzel', Georgia, serif;
+  --font-body: 'EB Garamond', Georgia, serif;
+  --font-ui: 'Raleway', system-ui, sans-serif;
+  --font-ornament: 'Cinzel Decorative', Georgia, serif;
+}
+
+/* Base styles */
+html {
+  background-color: var(--color-void);
+  color: var(--color-parchment);
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Article content typography */
+.article-content {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--color-parchment);
+}
+
+.article-content p {
+  margin-bottom: 1.5em;
+}
+
+.article-content h2,
+.article-content h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  margin-top: 2em;
+  margin-bottom: 0.75em;
+  border-bottom: 1px solid var(--color-gold);
+  padding-bottom: 0.25em;
+}
+
+.article-content h2 {
+  font-size: 1.375rem;
+}
+
+.article-content h3 {
+  font-size: 1.125rem;
+}
+
+.article-content blockquote {
+  border-left: 3px solid var(--color-gold);
+  background: var(--color-ash);
+  padding: 16px;
+  margin: 1.5em 0;
+  font-style: italic;
+}
+
+.article-content a {
+  color: var(--color-gold);
+  text-decoration: none;
+}
+
+.article-content a:hover {
+  text-decoration: underline;
+}
+
+.article-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 2px;
+  margin: 1.5em 0;
+}
+
+/* Drop cap for first paragraph */
+.article-content > p:first-of-type::first-letter {
+  font-family: var(--font-ornament);
+  float: left;
+  font-size: 3.5em;
+  line-height: 0.8;
+  padding-right: 8px;
+  padding-top: 4px;
+  color: var(--color-gold);
+}
+
+/* Focus ring for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-void);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-iron);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-faded);
+}
+
+/* Spin animation for pull-to-refresh */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
