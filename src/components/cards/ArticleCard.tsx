@@ -14,7 +14,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
 
   return (
     <Link
-      to={`/article/${article.id}`}
+      to={`/app/article/${article.id}`}
       className="group block bg-crypt border border-iron rounded-[2px] overflow-hidden transition-all duration-200 hover:border-gold hover:shadow-[0_4px_24px_rgba(200,168,75,0.12)] active:scale-[0.98] active:transition-transform active:duration-100"
     >
       {/* Thumbnail */}

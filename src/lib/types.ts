@@ -4,6 +4,7 @@ export interface Feed {
   title: string;
   description: string | null;
   favicon_url: string | null;
+  user_id: string;
   last_fetched_at: string | null;
   created_at: string;
 }

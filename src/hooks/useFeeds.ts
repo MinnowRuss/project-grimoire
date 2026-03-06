@@ -1,17 +1,26 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 import type { Feed } from '../lib/types';
 
 export function useFeeds() {
+  const { user } = useAuth();
   const [feeds, setFeeds] = useState<Feed[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchFeeds = useCallback(async () => {
+    if (!user?.id) {
+      setFeeds([]);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     const { data, error: err } = await supabase
       .from('feeds')
       .select('*')
+      .eq('user_id', user.id)
       .order('created_at', { ascending: true });
 
     if (err) {
@@ -21,13 +30,17 @@ export function useFeeds() {
       setError(null);
     }
     setLoading(false);
-  }, []);
+  }, [user?.id]);
 
   useEffect(() => {
     fetchFeeds();
   }, [fetchFeeds]);
 
   const addFeed = async (feedUrl: string): Promise<{ success: boolean; error?: string }> => {
+    if (!user?.id) {
+      return { success: false, error: 'You must be logged in to add feeds.' };
+    }
+
     try {
       // Call the Edge Function to fetch and parse the feed
       const { data: fnData, error: fnError } = await supabase.functions.invoke('fetch-feed', {
@@ -50,6 +63,7 @@ export function useFeeds() {
           title: fnData.feed.title,
           description: fnData.feed.description || null,
           favicon_url: fnData.feed.favicon_url || null,
+          user_id: user.id,
           last_fetched_at: new Date().toISOString(),
         })
         .select()

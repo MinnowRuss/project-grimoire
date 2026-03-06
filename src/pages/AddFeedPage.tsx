@@ -9,7 +9,7 @@ export function AddFeedPage() {
   const handleSubmit = async (url: string) => {
     const result = await addFeed(url);
     if (result.success) {
-      navigate('/feeds');
+      navigate('/app/feeds');
     }
     return result;
   };
@@ -18,7 +18,7 @@ export function AddFeedPage() {
     <>
       {/* Add feed nav bar */}
       <nav className="sticky top-0 z-50 flex items-center justify-between px-4 h-12 bg-crypt border-b border-iron">
-        <Link to="/feeds" className="font-ui text-sm text-gold hover:text-parchment transition-colors">
+        <Link to="/app/feeds" className="font-ui text-sm text-gold hover:text-parchment transition-colors">
           ← Back
         </Link>
         <span className="font-ui text-[11px] tracking-[0.12em] uppercase text-faded">

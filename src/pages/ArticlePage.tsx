@@ -42,7 +42,7 @@ export function ArticlePage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
         <p className="font-display text-lg text-parchment mb-2">Article Not Found</p>
-        <Link to="/" className="font-ui text-sm text-gold hover:underline">
+        <Link to="/app" className="font-ui text-sm text-gold hover:underline">
           ← Back to feed
         </Link>
       </div>
@@ -56,7 +56,7 @@ export function ArticlePage() {
       <ReadingProgress />
       {/* Reader nav bar */}
       <nav className="sticky top-0 z-50 flex items-center justify-between px-4 h-12 bg-crypt border-b border-iron">
-        <Link to="/" className="font-ui text-sm text-gold hover:text-parchment transition-colors">
+        <Link to="/app" className="font-ui text-sm text-gold hover:text-parchment transition-colors">
           ← Back
         </Link>
         <span className="font-ui text-[11px] tracking-[0.12em] uppercase text-faded">
