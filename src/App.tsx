@@ -2,8 +2,9 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { OfflineBanner } from './components/layout/OfflineBanner';
 import { AuthGuard } from './components/layout/AuthGuard';
 import { AppLayout } from './components/layout/AppLayout';
-import { RootRedirect } from './components/layout/RootRedirect';
 import { LoginPage } from './pages/LoginPage';
+import { LandingPage } from './pages/LandingPage';
+import { PrivacyPage } from './pages/PrivacyPage';
 import { NavBar } from './components/layout/NavBar';
 import { HomePage } from './pages/HomePage';
 import { ArticlePage } from './pages/ArticlePage';
@@ -16,10 +17,9 @@ function App() {
       <OfflineBanner />
       <Routes>
         {/* Public routes */}
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
-
-        {/* Root redirect: auth -> /app, no auth -> /login */}
-        <Route path="/" element={<RootRedirect />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
 
         {/* Protected app routes */}
         <Route path="/app" element={<AuthGuard />}>
