@@ -11,9 +11,14 @@ export function ArticleCard({ article }: ArticleCardProps) {
   const dateStr = formatArticleDate(article.published_at);
   const rawExcerpt = article.summary || article.content || '';
   const strippedExcerpt = rawExcerpt.replace(/<[^>]*>/g, '').trim();
-  // Don't display URL-only text as an excerpt
-  let excerpt = strippedExcerpt;
-  try { new URL(strippedExcerpt); excerpt = ''; } catch { /* not a URL — keep it */ }
+  // Don't display URL-only or URL-heavy text as an excerpt
+  const isNotUseful = (() => {
+    if (!strippedExcerpt) return true;
+    try { new URL(strippedExcerpt); return true; } catch { /* not a bare URL */ }
+    const urls = strippedExcerpt.match(/https?:\/\/\S+/g) || [];
+    return urls.join('').length > strippedExcerpt.length * 0.5;
+  })();
+  const excerpt = isNotUseful ? '' : strippedExcerpt;
 
   return (
     <Link

@@ -75,17 +75,21 @@ function extractThumbnail(itemXml: string): string | null {
   return null;
 }
 
-// Check if a string is just a URL (not useful as a description)
+// Check if text is not a useful description (bare URL, URL-heavy, or too short)
 function isUrlOnly(text: string | null): boolean {
   if (!text) return true;
   const stripped = text.replace(/<[^>]*>/g, '').trim();
   if (!stripped || stripped.length < 10) return true;
+  // Bare URL check
   try {
     const u = new URL(stripped);
-    return u.protocol === 'http:' || u.protocol === 'https:';
-  } catch {
-    return false;
-  }
+    if (u.protocol === 'http:' || u.protocol === 'https:') return true;
+  } catch { /* not a bare URL */ }
+  // URL-heavy text (e.g. HN "Article URL: https://... Comments URL: https://...")
+  const urls = stripped.match(/https?:\/\/\S+/g) || [];
+  const urlChars = urls.join('').length;
+  if (urlChars > stripped.length * 0.5) return true;
+  return false;
 }
 
 // Fetch Open Graph metadata from an article's web page
