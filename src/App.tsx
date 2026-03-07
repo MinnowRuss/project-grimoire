@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { OfflineBanner } from './components/layout/OfflineBanner';
 import { AuthGuard } from './components/layout/AuthGuard';
@@ -14,6 +15,7 @@ import { AddFeedPage } from './pages/AddFeedPage';
 function App() {
   return (
     <BrowserRouter>
+      <Analytics />
       <OfflineBanner />
       <Routes>
         {/* Public routes */}
