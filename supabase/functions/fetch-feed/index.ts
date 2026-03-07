@@ -75,6 +75,132 @@ function extractThumbnail(itemXml: string): string | null {
   return null;
 }
 
+// Check if a string is just a URL (not useful as a description)
+function isUrlOnly(text: string | null): boolean {
+  if (!text) return true;
+  const stripped = text.replace(/<[^>]*>/g, '').trim();
+  if (!stripped || stripped.length < 10) return true;
+  try {
+    const u = new URL(stripped);
+    return u.protocol === 'http:' || u.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+// Fetch Open Graph metadata from an article's web page
+interface OgMetadata {
+  ogImage: string | null;
+  ogDescription: string | null;
+}
+
+async function fetchOgMetadata(articleUrl: string, timeoutMs = 4000): Promise<OgMetadata> {
+  const result: OgMetadata = { ogImage: null, ogDescription: null };
+
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+    const resp = await fetch(articleUrl, {
+      headers: {
+        'User-Agent': 'Grimoire RSS Reader/1.0',
+        'Accept': 'text/html',
+      },
+      signal: controller.signal,
+      redirect: 'follow',
+    });
+
+    clearTimeout(timer);
+    if (!resp.ok) return result;
+
+    // Stream-read only the first ~50KB (meta tags live in <head>)
+    const reader = resp.body?.getReader();
+    if (!reader) return result;
+
+    let html = '';
+    const decoder = new TextDecoder();
+    const maxBytes = 50_000;
+
+    while (html.length < maxBytes) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      html += decoder.decode(value, { stream: true });
+    }
+    reader.cancel();
+
+    // Extract og:image (try both attribute orderings)
+    const ogImg =
+      html.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i) ??
+      html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:image["']/i);
+    if (ogImg) {
+      result.ogImage = ogImg[1];
+    } else {
+      const twImg =
+        html.match(/<meta[^>]*(?:name|property)=["']twitter:image["'][^>]*content=["']([^"']+)["']/i) ??
+        html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*(?:name|property)=["']twitter:image["']/i);
+      if (twImg) result.ogImage = twImg[1];
+    }
+
+    // Extract og:description
+    const ogDesc =
+      html.match(/<meta[^>]*property=["']og:description["'][^>]*content=["']([^"']+)["']/i) ??
+      html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:description["']/i);
+    if (ogDesc) {
+      result.ogDescription = ogDesc[1];
+    } else {
+      const metaDesc =
+        html.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["']/i) ??
+        html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*name=["']description["']/i);
+      if (metaDesc) result.ogDescription = metaDesc[1];
+    }
+  } catch {
+    // Timeout, network error, or abort — return whatever we have
+  }
+
+  return result;
+}
+
+// Enrich articles missing thumbnails or with URL-only summaries using OG data
+async function enrichArticlesWithOgData(articles: FeedItem[]): Promise<FeedItem[]> {
+  const MAX_CONCURRENT = 5;
+
+  const needsEnrichment = articles
+    .map((article, index) => ({
+      index,
+      article,
+      needsThumbnail: !article.thumbnail_url,
+      needsSummary: isUrlOnly(article.summary),
+      needs: !article.thumbnail_url || isUrlOnly(article.summary),
+    }))
+    .filter(item => item.needs && item.article.url);
+
+  if (needsEnrichment.length === 0) return articles;
+
+  const enriched = [...articles];
+
+  for (let i = 0; i < needsEnrichment.length; i += MAX_CONCURRENT) {
+    const batch = needsEnrichment.slice(i, i + MAX_CONCURRENT);
+    const results = await Promise.allSettled(
+      batch.map(item => fetchOgMetadata(item.article.url!))
+    );
+
+    results.forEach((result, batchIndex) => {
+      if (result.status !== 'fulfilled') return;
+      const og = result.value;
+      const { index, needsThumbnail, needsSummary } = batch[batchIndex];
+
+      if (needsThumbnail && og.ogImage) {
+        enriched[index] = { ...enriched[index], thumbnail_url: og.ogImage };
+      }
+      if (needsSummary && og.ogDescription) {
+        enriched[index] = { ...enriched[index], summary: og.ogDescription };
+      }
+    });
+  }
+
+  return enriched;
+}
+
 // Split XML into items/entries using matchAll
 function splitItems(xml: string, tag: string): string[] {
   const pattern = new RegExp(`<${tag}[\\s>][\\s\\S]*?</${tag}>`, 'gi');
@@ -182,6 +308,9 @@ serve(async (req) => {
       }
     }
 
+    // Enrich articles missing thumbnails or with URL-only summaries
+    const enrichedArticles = await enrichArticlesWithOgData(articles);
+
     const feedUrl = new URL(url);
     const faviconUrl = `https://www.google.com/s2/favicons?domain=${feedUrl.hostname}&sz=32`;
 
@@ -192,7 +321,7 @@ serve(async (req) => {
           description: feedDescription,
           favicon_url: faviconUrl,
         },
-        articles,
+        articles: enrichedArticles,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

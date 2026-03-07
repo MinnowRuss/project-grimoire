@@ -10,7 +10,10 @@ export function ArticleCard({ article }: ArticleCardProps) {
   const feedTitle = article.feed?.title ?? 'Unknown';
   const dateStr = formatArticleDate(article.published_at);
   const rawExcerpt = article.summary || article.content || '';
-  const excerpt = rawExcerpt.replace(/<[^>]*>/g, '');
+  const strippedExcerpt = rawExcerpt.replace(/<[^>]*>/g, '').trim();
+  // Don't display URL-only text as an excerpt
+  let excerpt = strippedExcerpt;
+  try { new URL(strippedExcerpt); excerpt = ''; } catch { /* not a URL — keep it */ }
 
   return (
     <Link

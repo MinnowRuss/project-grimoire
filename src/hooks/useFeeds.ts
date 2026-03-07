@@ -132,7 +132,7 @@ export function useFeeds() {
 
           await supabase.from('articles').upsert(articles, {
             onConflict: 'feed_id,guid',
-            ignoreDuplicates: true,
+            ignoreDuplicates: false,
           });
         }
 
