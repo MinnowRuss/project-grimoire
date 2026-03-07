@@ -5,17 +5,17 @@ export function LandingPage() {
     <div className="min-h-screen bg-void text-parchment flex flex-col">
       {/* Hero */}
       <main className="flex-1 flex flex-col items-center justify-center px-4 py-20">
-        <h1 className="font-ornament text-4xl md:text-5xl text-parchment tracking-[0.15em] mb-3">
+        <h1 className="font-ornament font-bold text-[40px] text-parchment tracking-[0.15em] mb-3">
           Grimoire
         </h1>
-        <p className="font-body text-lg text-faded italic mb-12 text-center max-w-md">
+        <p className="font-body text-[24px] text-faded italic mb-12 text-center max-w-md">
           A dark, beautiful RSS reader. Yours alone.
         </p>
 
         {/* Feature bullets */}
-        <div className="w-full max-w-md space-y-6 mb-14">
-          <div className="flex items-start gap-4">
-            <span className="text-gold text-xl leading-none mt-0.5">⊛</span>
+        <div className="w-full max-w-md space-y-8 mb-14">
+          <div className="flex flex-col items-center text-center gap-2">
+            <span className="text-gold text-2xl leading-none">⊛</span>
             <div>
               <p className="font-display text-sm tracking-wide text-parchment">
                 Subscribe to Any Feed
@@ -27,8 +27,8 @@ export function LandingPage() {
             </div>
           </div>
 
-          <div className="flex items-start gap-4">
-            <span className="text-gold text-xl leading-none mt-0.5">⊛</span>
+          <div className="flex flex-col items-center text-center gap-2">
+            <span className="text-gold text-2xl leading-none">⊛</span>
             <div>
               <p className="font-display text-sm tracking-wide text-parchment">
                 Private &amp; Personal
@@ -36,19 +36,6 @@ export function LandingPage() {
               <p className="font-body text-sm text-faded mt-1">
                 Your subscriptions are yours alone. No algorithms, no tracking,
                 no ads.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-4">
-            <span className="text-gold text-xl leading-none mt-0.5">⊛</span>
-            <div>
-              <p className="font-display text-sm tracking-wide text-parchment">
-                Dark Academia Aesthetic
-              </p>
-              <p className="font-body text-sm text-faded mt-1">
-                Designed for readers who appreciate beautiful typography and a
-                quiet, focused experience.
               </p>
             </div>
           </div>

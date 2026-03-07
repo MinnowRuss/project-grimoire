@@ -21,7 +21,7 @@ export function AddFeedPage() {
         <Link to="/app/feeds" className="font-ui text-sm text-gold hover:text-parchment transition-colors">
           ← Back
         </Link>
-        <span className="font-ui text-[11px] tracking-[0.12em] uppercase text-faded">
+        <span className="font-display text-[11px] tracking-[0.12em] uppercase text-faded">
           Add Feed
         </span>
         <div className="w-12" />

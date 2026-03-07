@@ -51,8 +51,8 @@ export function ArticleCard({ article }: ArticleCardProps) {
 
         {/* Headline */}
         <h2
-          className={`font-display text-lg leading-snug mb-2 transition-opacity duration-200 ${
-            article.is_read ? 'opacity-60' : 'text-parchment'
+          className={`font-display text-lg leading-snug mb-2 transition-colors duration-200 ${
+            article.is_read ? 'text-blood opacity-80' : 'text-parchment'
           }`}
         >
           {article.title}

@@ -10,16 +10,17 @@ export function FeedsPage() {
       {/* Feeds nav bar */}
       <nav className="sticky top-0 z-50 flex items-center justify-between px-4 h-12 bg-crypt border-b border-iron">
         <Link to="/app" className="font-ui text-sm text-gold hover:text-parchment transition-colors">
-          ← Back
+          ← BACK
         </Link>
-        <span className="font-ui text-[11px] tracking-[0.12em] uppercase text-faded">
-          My Feeds
+        <span className="font-display text-[11px] tracking-[0.15em] uppercase text-faded">
+          My Grimoire
         </span>
         <Link
           to="/app/feeds/add"
-          className="font-ui text-sm text-gold hover:text-parchment transition-colors tracking-[0.05em] uppercase"
+          className="flex items-center gap-1 font-ui text-sm text-gold hover:text-parchment transition-colors tracking-[0.05em] uppercase"
         >
-          Add Feed
+          <span className="text-base leading-none">+</span>
+          <span>Add Feed</span>
         </Link>
       </nav>
 
